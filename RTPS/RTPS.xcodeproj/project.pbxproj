@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A144C2D220CE04200FB4731 /* FirebaseCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A144C2C220CE04200FB4731 /* FirebaseCore.framework */; };
+		1A144C2F220CE05900FB4731 /* FirebaseAnalytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A144C2E220CE05900FB4731 /* FirebaseAnalytics.framework */; };
 		1A873A8F2203B33300AD6B74 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A873A8E2203B33300AD6B74 /* AppDelegate.swift */; };
 		1A873A912203B33300AD6B74 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 1A873A902203B33300AD6B74 /* GameScene.sks */; };
 		1A873A932203B33300AD6B74 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 1A873A922203B33300AD6B74 /* Actions.sks */; };
@@ -37,6 +39,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1A144C2C220CE04200FB4731 /* FirebaseCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FirebaseCore.framework; path = ../../../../Downloads/Firebase/Analytics/FirebaseCore.framework; sourceTree = "<group>"; };
+		1A144C2E220CE05900FB4731 /* FirebaseAnalytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FirebaseAnalytics.framework; path = ../../../../Downloads/Firebase/Analytics/FirebaseAnalytics.framework; sourceTree = "<group>"; };
 		1A873A8B2203B33300AD6B74 /* RTPS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RTPS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A873A8E2203B33300AD6B74 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1A873A902203B33300AD6B74 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -60,6 +64,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A144C2F220CE05900FB4731 /* FirebaseAnalytics.framework in Frameworks */,
+				1A144C2D220CE04200FB4731 /* FirebaseCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,6 +109,8 @@
 		1A873A8D2203B33300AD6B74 /* RTPS */ = {
 			isa = PBXGroup;
 			children = (
+				1A144C2E220CE05900FB4731 /* FirebaseAnalytics.framework */,
+				1A144C2C220CE04200FB4731 /* FirebaseCore.framework */,
 				1A873A8E2203B33300AD6B74 /* AppDelegate.swift */,
 				1A873A902203B33300AD6B74 /* GameScene.sks */,
 				1A873A922203B33300AD6B74 /* Actions.sks */,
