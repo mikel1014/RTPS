@@ -16,7 +16,10 @@ class GameScene: SKScene {
     
     override func didMove(to view: SKView) {
         
-       
+        let background = SKSpriteNode(imageNamed: "RTPS_Map_Background")
+        background.position = CGPoint(x: size.width / 2, y : size.height / 2)
+        background.zRotation = 1.5708
+        addChild(background)
     }
     
     
