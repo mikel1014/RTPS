@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1A873A8F2203B33300AD6B74 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A873A8E2203B33300AD6B74 /* AppDelegate.swift */; };
-		1A873A912203B33300AD6B74 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 1A873A902203B33300AD6B74 /* GameScene.sks */; };
 		1A873A932203B33300AD6B74 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 1A873A922203B33300AD6B74 /* Actions.sks */; };
 		1A873A952203B33300AD6B74 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A873A942203B33300AD6B74 /* GameScene.swift */; };
 		1A873A972203B33300AD6B74 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A873A962203B33300AD6B74 /* GameViewController.swift */; };
@@ -52,7 +51,6 @@
 		1A144C31220CE1B300FB4731 /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		1A873A8B2203B33300AD6B74 /* RTPS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RTPS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A873A8E2203B33300AD6B74 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; usesTabs = 0; };
-		1A873A902203B33300AD6B74 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		1A873A922203B33300AD6B74 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
 		1A873A942203B33300AD6B74 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		1A873A962203B33300AD6B74 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
@@ -141,7 +139,6 @@
 				1A144C31220CE1B300FB4731 /* module.modulemap */,
 				1A144C30220CE18300FB4731 /* Firebase.h */,
 				1A873A8E2203B33300AD6B74 /* AppDelegate.swift */,
-				1A873A902203B33300AD6B74 /* GameScene.sks */,
 				1A873A922203B33300AD6B74 /* Actions.sks */,
 				1A873A942203B33300AD6B74 /* GameScene.swift */,
 				1A873A962203B33300AD6B74 /* GameViewController.swift */,
@@ -294,7 +291,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A873A9A2203B33300AD6B74 /* Main.storyboard in Resources */,
-				1A873A912203B33300AD6B74 /* GameScene.sks in Resources */,
 				1A873A9C2203B33300AD6B74 /* Assets.xcassets in Resources */,
 				1A873A9F2203B33300AD6B74 /* LaunchScreen.storyboard in Resources */,
 				1A873A932203B33300AD6B74 /* Actions.sks in Resources */,
