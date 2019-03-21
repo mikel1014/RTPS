@@ -19,7 +19,18 @@ class GameScene: SKScene {
         let background = SKSpriteNode(imageNamed: "RTPS_Map_Background")
         background.position = CGPoint(x: size.width / 2, y : size.height / 2)
         background.zRotation = 1.5708
+        
+        let mainCharacter = SKSpriteNode(imageNamed: "Main_Character")
+        mainCharacter.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        mainCharacter.setScale(0.18)
+
+        let zombie = SKSpriteNode(imageNamed: "Zombie")
+        background.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        
+        
         addChild(background)
+        addChild(mainCharacter)
+        addChild(zombie)
     }
     
     
