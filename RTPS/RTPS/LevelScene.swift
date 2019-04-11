@@ -40,7 +40,7 @@ class LevelScene: SKScene {
     var fOffsetX: CGFloat{
         get{return frame.size.width * 0.4}
     }
-    
+    //Added buttons and joystick
     
     init(_ frameSize: CGSize){
         
