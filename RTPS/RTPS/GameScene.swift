@@ -25,7 +25,7 @@ class GameScene: SKScene {
         mainCharacter.setScale(0.18)
 
         let zombie = SKSpriteNode(imageNamed: "Zombie")
-        background.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        zombie.position = CGPoint(x: size.width / 2, y: size.height / 2)
         
         
         addChild(background)
