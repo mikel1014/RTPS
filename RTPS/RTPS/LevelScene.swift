@@ -11,8 +11,9 @@ import GameplayKit
 class LevelScene: SKScene {
     
     let cameraNode:SKCameraNode
-    let player:SKSpriteNode
-    let dButton:SKSpriteNode
+    let player: SKSpriteNode
+    let dButton: SKSpriteNode
+    let fButton: SKSpriteNode
     let rotationOffsetFactorForSpriteImage:CGFloat = -CGFloat.pi / 2
     //let rightJS:EEJoyStick
     let leftJS:EEJoyStick
@@ -28,10 +29,16 @@ class LevelScene: SKScene {
     var leftMovementData: [CGFloat]? = nil
     var rightMovementData: [CGFloat]? = nil
     var dOffsetY: CGFloat{
-        get{ return frame.size.height * 0.4 }
+        get{ return frame.size.height * 0.38 }
     }
     var dOffsetX: CGFloat{
         get{return frame.size.width * 0.32}
+    }
+    var fOffsetY: CGFloat{
+        get{ return frame.size.height * 0.2 }
+    }
+    var fOffsetX: CGFloat{
+        get{return frame.size.width * 0.4}
     }
     
     
@@ -44,6 +51,7 @@ class LevelScene: SKScene {
         leftJS = EEJoyStick()
         player = SKSpriteNode(imageNamed: "Main_Character.png")
         dButton = SKSpriteNode(imageNamed: "Dodge_Button.png")
+        fButton = SKSpriteNode(imageNamed: "Fire_Button.png")
 
         
         //swap size before calling super
@@ -67,6 +75,9 @@ class LevelScene: SKScene {
         
         dButton.position = CGPoint(x: baseX/2, y: dOffsetY)
         addChild(dButton)
+        
+        fButton.position = CGPoint(x: baseX/2, y: dOffsetY)
+        addChild(fButton)
         
         leftJS.position = CGPoint(x: frame.size.width * 0.25 + baseX, y: frame.size.height * 0.1 + baseY)
         addChild(leftJS)
@@ -197,6 +208,7 @@ class LevelScene: SKScene {
         background = aDecoder.decodeObject(forKey: "background") as! SKSpriteNode
         player = aDecoder.decodeObject(forKey: "player") as! SKSpriteNode
         dButton = aDecoder.decodeObject(forKey: "dButton") as! SKSpriteNode
+        fButton = aDecoder.decodeObject(forKey: "fButton") as! SKSpriteNode
         super.init(coder: aDecoder)
     }
     
@@ -208,6 +220,7 @@ class LevelScene: SKScene {
         aCoder.encode(background, forKey: "background")
         aCoder.encode(player, forKey: "player")
         aCoder.encode(dButton, forKey: "dButton")
+        aCoder.encode(fButton, forKey: "fButton")
     }
     
     override func didMove(to view:SKView){
@@ -260,6 +273,7 @@ class LevelScene: SKScene {
         
         //rightJS.position = CGPoint(x: player.position.x + offsetX ,y: player.position.y - offsetY)
         dButton.position = CGPoint(x: player.position.x + dOffsetX ,y: player.position.y - dOffsetY)
+        fButton.position = CGPoint(x: player.position.x + fOffsetX ,y: player.position.y - fOffsetY)
         leftJS.position = CGPoint(x: player.position.x - offsetX ,y: player.position.y - offsetY)
     }
     
