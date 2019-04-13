@@ -20,8 +20,14 @@
 		1AA6FE00220CEB7F002EF27B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA6FDFF220CEB7F002EF27B /* libz.tbd */; };
 		1AA6FE02220CEB88002EF27B /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA6FE01220CEB88002EF27B /* StoreKit.framework */; };
 		1AA6FE12220CEF27002EF27B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1AA6FE11220CEF27002EF27B /* GoogleService-Info.plist */; };
+
+		897F8504225FC70B00AF9883 /* Enemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 897F8503225FC70B00AF9883 /* Enemy.swift */; };
+		897F8506225FCE3800AF9883 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 897F8505225FCE3800AF9883 /* Player.swift */; };
+		897F8508225FEC9200AF9883 /* Gun.swift in Sources */ = {isa = PBXBuildFile; fileRef = 897F8507225FEC9200AF9883 /* Gun.swift */; };
+
 		1ABC853B225FC73300716AEF /* EEJoyStick.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ABC853A225FC73300716AEF /* EEJoyStick.swift */; };
 		1ABC853F225FD2AA00716AEF /* LevelScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ABC853E225FD2AA00716AEF /* LevelScene.swift */; };
+
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,8 +69,14 @@
 		1AA6FDFF220CEB7F002EF27B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		1AA6FE01220CEB88002EF27B /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		1AA6FE11220CEF27002EF27B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+
+		897F8503225FC70B00AF9883 /* Enemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enemy.swift; sourceTree = "<group>"; };
+		897F8505225FCE3800AF9883 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		897F8507225FEC9200AF9883 /* Gun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gun.swift; sourceTree = "<group>"; };
+
 		1ABC853A225FC73300716AEF /* EEJoyStick.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EEJoyStick.swift; sourceTree = "<group>"; };
 		1ABC853E225FD2AA00716AEF /* LevelScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelScene.swift; sourceTree = "<group>"; };
+
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,8 +131,14 @@
 		1A873A8D2203B33300AD6B74 /* RTPS */ = {
 			isa = PBXGroup;
 			children = (
+
+				897F8507225FEC9200AF9883 /* Gun.swift */,
+				897F8505225FCE3800AF9883 /* Player.swift */,
+				897F8503225FC70B00AF9883 /* Enemy.swift */,
+
 				1ABC853E225FD2AA00716AEF /* LevelScene.swift */,
 				1ABC853A225FC73300716AEF /* EEJoyStick.swift */,
+
 				1A144C31220CE1B300FB4731 /* module.modulemap */,
 				1A144C30220CE18300FB4731 /* Firebase.h */,
 				1A873A8E2203B33300AD6B74 /* AppDelegate.swift */,
@@ -297,9 +315,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				897F8504225FC70B00AF9883 /* Enemy.swift in Sources */,
 				1A873A952203B33300AD6B74 /* GameScene.swift in Sources */,
 				1ABC853B225FC73300716AEF /* EEJoyStick.swift in Sources */,
 				1A873A972203B33300AD6B74 /* GameViewController.swift in Sources */,
+				897F8506225FCE3800AF9883 /* Player.swift in Sources */,
+				897F8508225FEC9200AF9883 /* Gun.swift in Sources */,
 				1A873A8F2203B33300AD6B74 /* AppDelegate.swift in Sources */,
 				1ABC853F225FD2AA00716AEF /* LevelScene.swift in Sources */,
 			);

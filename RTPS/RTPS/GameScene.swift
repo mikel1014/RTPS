@@ -26,6 +26,7 @@ class GameScene: SKScene {
 
         let zombie = SKSpriteNode(imageNamed: "Zombie")
         zombie.position = CGPoint(x: size.width / 2, y: size.height / 2)
+
         zombie.setScale(0.18)
         
         
