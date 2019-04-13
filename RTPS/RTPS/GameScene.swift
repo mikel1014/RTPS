@@ -16,7 +16,7 @@ class GameScene: SKScene {
     
     override func didMove(to view: SKView) {
         
-        let background = SKSpriteNode(imageNamed: "RTPS_Map_Background")
+       /* let background = SKSpriteNode(imageNamed: "RTPS_Map_Background")
         background.position = CGPoint(x: size.width / 2, y : size.height / 2)
         background.zRotation = 1.5708
         
@@ -26,11 +26,13 @@ class GameScene: SKScene {
 
         let zombie = SKSpriteNode(imageNamed: "Zombie")
         zombie.position = CGPoint(x: size.width / 2, y: size.height / 2)
+
+        zombie.setScale(0.18)
         
         
         addChild(background)
         addChild(mainCharacter)
-        addChild(zombie)
+        addChild(zombie)*/
     }
     
     
