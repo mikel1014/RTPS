@@ -19,13 +19,17 @@ class LevelScene: SKScene {
     let leftJS:EEJoyStick
     let scaledFrameSize: CGSize
     let background:SKSpriteNode
+    
+    var dBBox: CGSize!
+    var fBBox: CGSize!
+    
     var baseX: CGFloat {
         get{ return scaledFrameSize.width / 2 }
     }
     var baseY: CGFloat{
         get{  return scaledFrameSize.height / 2}
     }
-    let playerMaxMovementSpeed:CGFloat = CGFloat(2)
+    let playerMaxMovementSpeed:CGFloat = CGFloat(5)
     var leftMovementData: [CGFloat]? = nil
     var rightMovementData: [CGFloat]? = nil
     var dOffsetY: CGFloat{
@@ -73,10 +77,12 @@ class LevelScene: SKScene {
         //rightJS.position = CGPoint(x: frame.size.width * 0.75 + baseX, y: frame.size.height * 0.1 + baseY)
         //addChild(rightJS)
         
-        dButton.position = CGPoint(x: baseX/2, y: dOffsetY)
+        dBBox = dButton.size
+        dButton.position = CGPoint(x: player.position.x + dOffsetX ,y: player.position.y - dOffsetY)
         addChild(dButton)
         
-        fButton.position = CGPoint(x: baseX/2, y: dOffsetY)
+        fBBox = fButton.size
+        fButton.position = CGPoint(x: player.position.x + fOffsetX ,y: player.position.y - fOffsetY)
         addChild(fButton)
         
         leftJS.position = CGPoint(x: frame.size.width * 0.25 + baseX, y: frame.size.height * 0.1 + baseY)
@@ -88,7 +94,7 @@ class LevelScene: SKScene {
         addChild(player)
         
 
-
+        
         
         
         
@@ -106,6 +112,17 @@ class LevelScene: SKScene {
         //use converted points
         //let touchPt:CGPoint = CGPoint(x: ftloc.x, y: ftloc.y)
         //player.run(SKAction.move(to: touchPt, duration: 2), withKey: "moving player")
+        
+        for touch in touches{
+            let touchLoc = touch.location(in: self)
+            
+            //Checks to see if the use has clicked on the dodge button
+            if touchLoc.x >= dButton.position.x - dBBox.width/2 && touchLoc.x <= dButton.position.x + dBBox.width/2{
+                if touchLoc.y >= dButton.position.y - dBBox.height/2 && touchLoc.y <= dButton.position.y + dBBox.height/2{
+                    player.position = CGPoint(x: player.position.x + cos(player.zRotation + 1.5708) * 40, y: player.position.y + sin(player.zRotation + 1.5708) * 40)
+                }
+            }
+        }
     }
     
 
@@ -135,6 +152,7 @@ class LevelScene: SKScene {
                 //if it is in the right 1/3 of screen
                 else if touchLoc.x >= frame.size.width * 0.66 + displace.x {
                     //rightMovementData = rightJS.moveStick(joyStickLocation: rightJS.position, touchLocation: touchLoc, touch: touch)
+                   
                 }
             }
         }
