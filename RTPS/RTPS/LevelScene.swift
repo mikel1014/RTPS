@@ -8,12 +8,13 @@ import UIKit
 import SpriteKit
 import GameplayKit
 
-class LevelScene: SKScene {
+class LevelScene: SKScene, SKPhysicsContactDelegate {
     
     let cameraNode:SKCameraNode
     let player: SKSpriteNode
     let dButton: SKSpriteNode
     let fButton: SKSpriteNode
+    let aBox: SKSpriteNode
     let rotationOffsetFactorForSpriteImage:CGFloat = -CGFloat.pi / 2
     //let rightJS:EEJoyStick
     let leftJS:EEJoyStick
@@ -56,6 +57,7 @@ class LevelScene: SKScene {
         player = SKSpriteNode(imageNamed: "Main_Character.png")
         dButton = SKSpriteNode(imageNamed: "Dodge_Button.png")
         fButton = SKSpriteNode(imageNamed: "Fire_Button.png")
+        aBox = SKSpriteNode(imageNamed: "Ammo_Box.png")
 
         
         //swap size before calling super
@@ -85,12 +87,22 @@ class LevelScene: SKScene {
         fButton.position = CGPoint(x: player.position.x + fOffsetX ,y: player.position.y - fOffsetY)
         addChild(fButton)
         
+        
+        aBox.position = CGPoint(x: 500, y: 500)
+        aBox.scale(to: CGSize(width: 25, height: 25))
+        aBox.physicsBody = SKPhysicsBody(rectangleOf: aBox.size)
+        aBox.physicsBody!.isDynamic = false
+        addChild(aBox)
+        
         leftJS.position = CGPoint(x: frame.size.width * 0.25 + baseX, y: frame.size.height * 0.1 + baseY)
         addChild(leftJS)
         
         //Actors
         player.position = CGPoint(x: baseX/2, y: baseY/2)
         player.zPosition = 0.1
+        player.physicsBody = SKPhysicsBody(rectangleOf: player.size)
+        player.physicsBody!.affectedByGravity = false
+        player.physicsBody!.isDynamic = true
         addChild(player)
         
 
@@ -98,6 +110,11 @@ class LevelScene: SKScene {
         
         
         
+    }
+    
+    enum ColliderType: UInt32 {
+        case Player = 1
+        case AmmoBox = 2
     }
     
     //MARK: touches
@@ -227,6 +244,7 @@ class LevelScene: SKScene {
         player = aDecoder.decodeObject(forKey: "player") as! SKSpriteNode
         dButton = aDecoder.decodeObject(forKey: "dButton") as! SKSpriteNode
         fButton = aDecoder.decodeObject(forKey: "fButton") as! SKSpriteNode
+        aBox = aDecoder.decodeObject(forKey: "aBox") as! SKSpriteNode
         super.init(coder: aDecoder)
     }
     
@@ -239,10 +257,24 @@ class LevelScene: SKScene {
         aCoder.encode(player, forKey: "player")
         aCoder.encode(dButton, forKey: "dButton")
         aCoder.encode(fButton, forKey: "fButton")
+        aCoder.encode(aBox, forKey: "aBox")
     }
     
     override func didMove(to view:SKView){
         self.camera = cameraNode
+        
+        //Collision checking
+        player.physicsBody!.contactTestBitMask = ColliderType.AmmoBox.rawValue
+        
+        
+        if player.physicsBody!.categoryBitMask == ColliderType.Player.rawValue {
+            aBox.removeFromParent()
+        }
+        
+        player.physicsBody!.collisionBitMask = ColliderType.AmmoBox.rawValue
+        
+        
+        
     }
     
     //returns the size, multiplied by a factor.
@@ -269,12 +301,21 @@ class LevelScene: SKScene {
         }
     }
     
+    func didBegin(_ contact: SKPhysicsContact) {
+        print("Contact")
+        //Remove ammo box when player collides with it.
+        aBox.removeFromParent()
+    }
+    
     
     override func update(_ currentTime: TimeInterval) {
         //Handle Player Updating Based On Joystick Data
         //if rightMovementData != nil && rightJS.joyStickActive(){
             //updatePlayerRotation(JoystickData: rightMovementData!)
         //}
+        
+        self.physicsWorld.contactDelegate = self
+        
         if leftMovementData != nil && leftJS.joyStickActive(){
             updatePlayerPosition(JoystickData: leftMovementData!)
             updatePlayerRotation(JoystickData: leftMovementData!)
@@ -292,7 +333,11 @@ class LevelScene: SKScene {
         //rightJS.position = CGPoint(x: player.position.x + offsetX ,y: player.position.y - offsetY)
         dButton.position = CGPoint(x: player.position.x + dOffsetX ,y: player.position.y - dOffsetY)
         fButton.position = CGPoint(x: player.position.x + fOffsetX ,y: player.position.y - fOffsetY)
+        aBox.position = CGPoint(x: 500 ,y: 500)
         leftJS.position = CGPoint(x: player.position.x - offsetX ,y: player.position.y - offsetY)
+        
+       
+        
     }
     
 }
