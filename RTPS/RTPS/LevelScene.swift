@@ -15,6 +15,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
     let dButton: SKSpriteNode
     let fButton: SKSpriteNode
     let aBox: SKSpriteNode
+    let gun: Gun
     let rotationOffsetFactorForSpriteImage:CGFloat = -CGFloat.pi / 2
     //let rightJS:EEJoyStick
     let leftJS:EEJoyStick
@@ -58,7 +59,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         dButton = SKSpriteNode(imageNamed: "Dodge_Button.png")
         fButton = SKSpriteNode(imageNamed: "Fire_Button.png")
         aBox = SKSpriteNode(imageNamed: "Ammo_Box.png")
-
+        gun = Gun()
         
         //swap size before calling super
         let swapSize = CGSize(width: frameSize.height, height: frameSize.width)
@@ -245,6 +246,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         dButton = aDecoder.decodeObject(forKey: "dButton") as! SKSpriteNode
         fButton = aDecoder.decodeObject(forKey: "fButton") as! SKSpriteNode
         aBox = aDecoder.decodeObject(forKey: "aBox") as! SKSpriteNode
+        gun = aDecoder.decodeObject(forKey: "gun") as! Gun
         super.init(coder: aDecoder)
     }
     
@@ -258,6 +260,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         aCoder.encode(dButton, forKey: "dButton")
         aCoder.encode(fButton, forKey: "fButton")
         aCoder.encode(aBox, forKey: "aBox")
+        aCoder.encode(gun, forKey: "gun")
     }
     
     override func didMove(to view:SKView){
@@ -265,12 +268,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         
         //Collision checking
         player.physicsBody!.contactTestBitMask = ColliderType.AmmoBox.rawValue
-        
-        
-        if player.physicsBody!.categoryBitMask == ColliderType.Player.rawValue {
-            aBox.removeFromParent()
-        }
-        
+        player.physicsBody!.categoryBitMask = ColliderType.Player.rawValue
         player.physicsBody!.collisionBitMask = ColliderType.AmmoBox.rawValue
         
         
@@ -299,12 +297,16 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         if !leftJS.joyStickActive(){
             leftMovementData = nil
         }
+        
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
         print("Contact")
         //Remove ammo box when player collides with it.
         aBox.removeFromParent()
+        
+        //Adds ammo to gun
+        gun.ammo += 5
     }
     
     
@@ -335,8 +337,6 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         fButton.position = CGPoint(x: player.position.x + fOffsetX ,y: player.position.y - fOffsetY)
         aBox.position = CGPoint(x: 500 ,y: 500)
         leftJS.position = CGPoint(x: player.position.x - offsetX ,y: player.position.y - offsetY)
-        
-       
         
     }
     
