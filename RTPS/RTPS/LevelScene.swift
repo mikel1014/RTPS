@@ -11,7 +11,8 @@ import GameplayKit
 class LevelScene: SKScene {
     
     let cameraNode:SKCameraNode
-    let player: SKSpriteNode
+    let player: Player
+    let gun: Gun
     let dButton: SKSpriteNode
     let fButton: SKSpriteNode
     let rotationOffsetFactorForSpriteImage:CGFloat = -CGFloat.pi / 2
@@ -52,8 +53,9 @@ class LevelScene: SKScene {
         cameraNode = SKCameraNode()
         background = SKSpriteNode(imageNamed: "RTPS_Map_Background.png")
         //rightJS = EEJoyStick()
+        player = Player()
+        gun = Gun()
         leftJS = EEJoyStick()
-        player = SKSpriteNode(imageNamed: "Main_Character.png")
         dButton = SKSpriteNode(imageNamed: "Dodge_Button.png")
         fButton = SKSpriteNode(imageNamed: "Fire_Button.png")
 
@@ -93,6 +95,9 @@ class LevelScene: SKScene {
         player.zPosition = 0.1
         addChild(player)
         
+        gun.position = player.WeaponAttachPoint()
+        gun.scale(to: CGSize(width: 20, height: 20))
+        addChild(gun)
 
         
         
@@ -224,7 +229,8 @@ class LevelScene: SKScene {
         //rightJS = aDecoder.decodeObject(forKey: "rightJS") as! EEJoyStick
         leftJS = aDecoder.decodeObject(forKey: "leftJS") as! EEJoyStick
         background = aDecoder.decodeObject(forKey: "background") as! SKSpriteNode
-        player = aDecoder.decodeObject(forKey: "player") as! SKSpriteNode
+        player = aDecoder.decodeObject(forKey: "player") as! Player
+        gun = aDecoder.decodeObject(forKey: "gun") as! Gun
         dButton = aDecoder.decodeObject(forKey: "dButton") as! SKSpriteNode
         fButton = aDecoder.decodeObject(forKey: "fButton") as! SKSpriteNode
         super.init(coder: aDecoder)
@@ -237,6 +243,7 @@ class LevelScene: SKScene {
         aCoder.encode(leftJS, forKey: "leftJS")
         aCoder.encode(background, forKey: "background")
         aCoder.encode(player, forKey: "player")
+        aCoder.encode(gun, forKey: "gun")
         aCoder.encode(dButton, forKey: "dButton")
         aCoder.encode(fButton, forKey: "fButton")
     }
@@ -293,6 +300,9 @@ class LevelScene: SKScene {
         dButton.position = CGPoint(x: player.position.x + dOffsetX ,y: player.position.y - dOffsetY)
         fButton.position = CGPoint(x: player.position.x + fOffsetX ,y: player.position.y - fOffsetY)
         leftJS.position = CGPoint(x: player.position.x - offsetX ,y: player.position.y - offsetY)
+        
+        gun.position = player.WeaponAttachPoint()
+        gun.zRotation = player.zRotation - 1.5708
     }
     
 }

@@ -12,7 +12,7 @@ import GameplayKit
 
 class Gun: SKSpriteNode {
     
-    var tex:SKTexture = SKTexture.init()
+    var tex:SKTexture = SKTexture.init(imageNamed: "Glock")
     var damage:Int
     var capacity:Int
     
