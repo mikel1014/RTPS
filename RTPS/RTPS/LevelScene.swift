@@ -95,6 +95,8 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         aBox.scale(to: CGSize(width: 25, height: 25))
         aBox.physicsBody = SKPhysicsBody(rectangleOf: aBox.size)
         aBox.physicsBody!.isDynamic = false
+        aBox.name = "AmmoBox"
+        
         addChild(aBox)
         
         leftJS.position = CGPoint(x: frame.size.width * 0.25 + baseX, y: frame.size.height * 0.1 + baseY)
@@ -106,10 +108,12 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         player.physicsBody = SKPhysicsBody(rectangleOf: player.size)
         player.physicsBody!.affectedByGravity = false
         player.physicsBody!.isDynamic = true
+        player.physicsBody?.collisionBitMask = 0x00000011
+        player.name = "Player"
         addChild(player)
         
 
-        
+        player.physicsBody!.contactTestBitMask = aBox.physicsBody!.collisionBitMask
         
         
         
@@ -271,12 +275,33 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         self.camera = cameraNode
         
         //Collision checking
-        player.physicsBody!.contactTestBitMask = ColliderType.AmmoBox.rawValue
-        player.physicsBody!.categoryBitMask = ColliderType.Player.rawValue
-        player.physicsBody!.collisionBitMask = ColliderType.AmmoBox.rawValue
         
-        
+
         run(SKAction.repeatForever(SKAction.sequence([SKAction.run(randSpawn), SKAction.wait(forDuration: 1.0)])))
+    }
+    
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+       //guard let nodeA = contact.bodyA.node else {return}
+       //guard let nodeB = contact.bodyB.node else {return}
+        guard let name = contact.bodyB.node?.name else { return }
+        print(name)
+        switch name {
+        case "Enemy":
+            print("hit")
+        default:
+            print("no hit")
+        }
+//        if contact.bodyA.node?.name == "Player" {
+//
+//        }else if contact.bodyB.node?.name == "AmmoBox"{
+//
+//        }
+//        else if let name = contact.bodyB.node?.name, name == "Enemy" {
+//
+//        }
+//        print("\(contact.bodyA.node!.name) \(contact.bodyB.node!.name)")
+        
     }
     
     //returns the size, multiplied by a factor.
@@ -304,18 +329,6 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-    func didBegin(_ contact: SKPhysicsContact) {
-        print("Contact")
-        //Remove ammo box when player collides with it.
-        
-        aBox.removeFromParent()
-        
-       
-
-        //Adds ammo to gun
-        gun.ammo += 5
-    }
-    
     //Helps with random enemy spawning
     func random() -> CGFloat{
         return CGFloat(Float(arc4random()) / 0xFFFFFFFF)
@@ -329,6 +342,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         
         let enemy: Enemy
         enemy = Enemy()
+        enemy.name = "Enemy"
        
         enemy.scale(to: CGSize(width: 55, height: 55))
         
@@ -399,8 +413,10 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
             
            // player.position = CGPoint(x: player.position.x + cos(player.zRotation + 1.5708) * 40, y: player.position.y + sin(player.zRotation + 1.5708) * 40)
             enemy.run(SKAction.move(to: player.position, duration: 2.2), withKey: "Chase")
+            
         }
         
+            //collisionBetween(player: player, object: aBox)
         
 //        enemy.run(SKAction.move(to: player.position, duration: 2.0))
         
