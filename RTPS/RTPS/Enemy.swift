@@ -16,6 +16,7 @@ class Enemy : SKSpriteNode {
     var moveSpd:Double
     let tex: SKTexture = SKTexture.init(imageNamed: "Zombie")
     
+    
     init(){
         health = 10
         moveSpd = 10.0
@@ -35,4 +36,11 @@ class Enemy : SKSpriteNode {
         
         SKAction.move(to: player_.position, duration: time)
     }
+    
+    func update(_ currentTime: TimeInterval) {
+        
+        
+        
+    }
+    
 }

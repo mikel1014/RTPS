@@ -16,6 +16,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
     let fButton: SKSpriteNode
     let aBox: SKSpriteNode
     let gun: Gun
+    //let enemy: Enemy
     let rotationOffsetFactorForSpriteImage:CGFloat = -CGFloat.pi / 2
     //let rightJS:EEJoyStick
     let leftJS:EEJoyStick
@@ -60,6 +61,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         fButton = SKSpriteNode(imageNamed: "Fire_Button.png")
         aBox = SKSpriteNode(imageNamed: "Ammo_Box.png")
         gun = Gun()
+        //enemy = Enemy()
         
         //swap size before calling super
         let swapSize = CGSize(width: frameSize.height, height: frameSize.width)
@@ -137,7 +139,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
             //Checks to see if the use has clicked on the dodge button
             if touchLoc.x >= dButton.position.x - dBBox.width/2 && touchLoc.x <= dButton.position.x + dBBox.width/2{
                 if touchLoc.y >= dButton.position.y - dBBox.height/2 && touchLoc.y <= dButton.position.y + dBBox.height/2{
-                    player.position = CGPoint(x: player.position.x + cos(player.zRotation + 1.5708) * 40, y: player.position.y + sin(player.zRotation + 1.5708) * 40)
+                    player.position = CGPoint(x: player.position.x + cos(player.zRotation + 1.5708) * 40, y: player.position.y + sin(player.zRotation + 1.5708) * 40) // Dashes along the players forward vector
                 }
             }
         }
@@ -247,6 +249,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         fButton = aDecoder.decodeObject(forKey: "fButton") as! SKSpriteNode
         aBox = aDecoder.decodeObject(forKey: "aBox") as! SKSpriteNode
         gun = aDecoder.decodeObject(forKey: "gun") as! Gun
+        //enemy = aDecoder.decodeObject(forKey: "enemy") as! Enemy
         super.init(coder: aDecoder)
     }
     
@@ -261,6 +264,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         aCoder.encode(fButton, forKey: "fButton")
         aCoder.encode(aBox, forKey: "aBox")
         aCoder.encode(gun, forKey: "gun")
+        //aCoder.encode(gun, forKey: "enemy")
     }
     
     override func didMove(to view:SKView){
@@ -272,7 +276,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         player.physicsBody!.collisionBitMask = ColliderType.AmmoBox.rawValue
         
         
-        
+        run(SKAction.repeatForever(SKAction.sequence([SKAction.run(randSpawn), SKAction.wait(forDuration: 1.0)])))
     }
     
     //returns the size, multiplied by a factor.
@@ -303,11 +307,43 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
     func didBegin(_ contact: SKPhysicsContact) {
         print("Contact")
         //Remove ammo box when player collides with it.
+        
         aBox.removeFromParent()
         
+       
+
         //Adds ammo to gun
         gun.ammo += 5
     }
+    
+    //Helps with random enemy spawning
+    func random() -> CGFloat{
+        return CGFloat(Float(arc4random()) / 0xFFFFFFFF)
+    }
+    
+    func random(min: CGFloat, max: CGFloat) -> CGFloat {
+        return random() * (max - min) + min
+    }
+    
+    func randSpawn() {
+        
+        let enemy: Enemy
+        enemy = Enemy()
+       
+        enemy.scale(to: CGSize(width: 55, height: 55))
+        
+        enemy.position = CGPoint(x: frame.size.width + enemy.size.width/2, y: frame.size.height * random(min: 0, max: 1))
+        
+        enemy.physicsBody = SKPhysicsBody(rectangleOf: enemy.size)
+        enemy.physicsBody!.affectedByGravity = false
+        enemy.physicsBody!.isDynamic = true
+        
+        addChild(enemy)
+        
+        //enemy.run(SKAction.moveBy(x: -size.width - enemy.size.width, y: 0.0, duration: TimeInterval(random(min: 1, max: 2))))
+        //enemy.run(SKAction.move(to: player.position, duration: 2.0))//
+    }
+    
     
     
     override func update(_ currentTime: TimeInterval) {
@@ -337,6 +373,36 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         fButton.position = CGPoint(x: player.position.x + fOffsetX ,y: player.position.y - fOffsetY)
         aBox.position = CGPoint(x: 500 ,y: 500)
         leftJS.position = CGPoint(x: player.position.x - offsetX ,y: player.position.y - offsetY)
+        
+        var enemies: [SKNode] = children.filter { (node) -> Bool in
+            if let _ = node as? Enemy {
+                return true
+            }
+            return false
+        }
+        
+        enemies.forEach { (node) in
+            let enemy = node as! Enemy
+            
+            enemy.update(currentTime)
+            
+            if let _ = enemy.action(forKey: "Chase") {
+                return
+            }
+            
+            let deltaX = player.position.x - enemy.position.x
+            let deltaY = player.position.y - enemy.position.y
+            let angle = atan2(deltaY, deltaX)
+            
+            enemy.zRotation = angle - 1.5708
+            
+            
+           // player.position = CGPoint(x: player.position.x + cos(player.zRotation + 1.5708) * 40, y: player.position.y + sin(player.zRotation + 1.5708) * 40)
+            enemy.run(SKAction.move(to: player.position, duration: 2.2), withKey: "Chase")
+        }
+        
+        
+//        enemy.run(SKAction.move(to: player.position, duration: 2.0))
         
     }
     
