@@ -139,7 +139,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
             //Checks to see if the use has clicked on the dodge button
             if touchLoc.x >= dButton.position.x - dBBox.width/2 && touchLoc.x <= dButton.position.x + dBBox.width/2{
                 if touchLoc.y >= dButton.position.y - dBBox.height/2 && touchLoc.y <= dButton.position.y + dBBox.height/2{
-                    player.position = CGPoint(x: player.position.x + cos(player.zRotation + 1.5708) * 40, y: player.position.y + sin(player.zRotation + 1.5708) * 40)
+                    player.position = CGPoint(x: player.position.x + cos(player.zRotation + 1.5708) * 40, y: player.position.y + sin(player.zRotation + 1.5708) * 40) // Dashes along the players forward vector
                 }
             }
         }
@@ -307,8 +307,11 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
     func didBegin(_ contact: SKPhysicsContact) {
         print("Contact")
         //Remove ammo box when player collides with it.
+        
         aBox.removeFromParent()
         
+       
+
         //Adds ammo to gun
         gun.ammo += 5
     }
@@ -330,6 +333,10 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         enemy.scale(to: CGSize(width: 55, height: 55))
         
         enemy.position = CGPoint(x: frame.size.width + enemy.size.width/2, y: frame.size.height * random(min: 0, max: 1))
+        
+        enemy.physicsBody = SKPhysicsBody(rectangleOf: enemy.size)
+        enemy.physicsBody!.affectedByGravity = false
+        enemy.physicsBody!.isDynamic = true
         
         addChild(enemy)
         
@@ -383,10 +390,15 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
                 return
             }
             
+            let deltaX = player.position.x - enemy.position.x
+            let deltaY = player.position.y - enemy.position.y
+            let angle = atan2(deltaY, deltaX)
+            
+            enemy.zRotation = angle - 1.5708
             
             
            // player.position = CGPoint(x: player.position.x + cos(player.zRotation + 1.5708) * 40, y: player.position.y + sin(player.zRotation + 1.5708) * 40)
-            enemy.run(SKAction.move(to: player.position, duration: 2.5), withKey: "Chase")
+            enemy.run(SKAction.move(to: player.position, duration: 2.2), withKey: "Chase")
         }
         
         
