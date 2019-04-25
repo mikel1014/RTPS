@@ -16,6 +16,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
     let fButton: SKSpriteNode
     let aBox: SKSpriteNode
     let gun: Gun
+    let enemy: Enemy
     let rotationOffsetFactorForSpriteImage:CGFloat = -CGFloat.pi / 2
     //let rightJS:EEJoyStick
     let leftJS:EEJoyStick
@@ -60,6 +61,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         fButton = SKSpriteNode(imageNamed: "Fire_Button.png")
         aBox = SKSpriteNode(imageNamed: "Ammo_Box.png")
         gun = Gun()
+        enemy = Enemy()
         
         //swap size before calling super
         let swapSize = CGSize(width: frameSize.height, height: frameSize.width)
@@ -247,6 +249,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         fButton = aDecoder.decodeObject(forKey: "fButton") as! SKSpriteNode
         aBox = aDecoder.decodeObject(forKey: "aBox") as! SKSpriteNode
         gun = aDecoder.decodeObject(forKey: "gun") as! Gun
+        enemy = aDecoder.decodeObject(forKey: "enemy") as! Enemy
         super.init(coder: aDecoder)
     }
     
@@ -261,6 +264,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         aCoder.encode(fButton, forKey: "fButton")
         aCoder.encode(aBox, forKey: "aBox")
         aCoder.encode(gun, forKey: "gun")
+        aCoder.encode(gun, forKey: "enemy")
     }
     
     override func didMove(to view:SKView){
@@ -272,7 +276,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         player.physicsBody!.collisionBitMask = ColliderType.AmmoBox.rawValue
         
         
-        
+        run(SKAction.repeatForever(SKAction.sequence([SKAction.run(randSpawn), SKAction.wait(forDuration: 1.0)])))
     }
     
     //returns the size, multiplied by a factor.
@@ -309,6 +313,31 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         gun.ammo += 5
     }
     
+    //Helps with random enemy spawning
+    func random() -> CGFloat{
+        return CGFloat(Float(arc4random()) / 0xFFFFFFFF)
+    }
+    
+    func random(min: CGFloat, max: CGFloat) -> CGFloat {
+        return random() * (max - min) + min
+    }
+    
+    func randSpawn() {
+        
+        //let enemy: Enemy
+        //enemy = Enemy()
+        
+        enemy.scale(to: CGSize(width: 55, height: 55))
+        
+        enemy.position = CGPoint(x: frame.size.width + enemy.size.width/2, y: frame.size.height * random(min: 0, max: 1))
+        
+        addChild(enemy)
+        
+        //enemy.run(SKAction.moveBy(x: -size.width - enemy.size.width, y: 0.0, duration: TimeInterval(random(min: 1, max: 2))))
+        
+    }
+    
+    
     
     override func update(_ currentTime: TimeInterval) {
         //Handle Player Updating Based On Joystick Data
@@ -337,6 +366,8 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         fButton.position = CGPoint(x: player.position.x + fOffsetX ,y: player.position.y - fOffsetY)
         aBox.position = CGPoint(x: 500 ,y: 500)
         leftJS.position = CGPoint(x: player.position.x - offsetX ,y: player.position.y - offsetY)
+        
+        enemy.run(SKAction.move(to: player.position, duration: 2.0))
         
     }
     
