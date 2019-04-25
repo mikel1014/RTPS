@@ -127,6 +127,12 @@ class LevelScene: SKScene {
                     player.position = CGPoint(x: player.position.x + cos(player.zRotation + 1.5708) * 40, y: player.position.y + sin(player.zRotation + 1.5708) * 40)
                 }
             }
+            else if touchLoc.x >= fButton.position.x - fBBox.width/2 && touchLoc.x <= fButton.position.x + fBBox.width/2 {
+                if touchLoc.y >= fButton.position.y - fBBox.height/2 && touchLoc.y <= fButton.position.y + fBBox.height/2{
+                    let dir = CGPoint(x: player.position.x + cos(player.zRotation + 1.5708), y: player.position.y + sin(player.zRotation + 1.5708))
+                    player.run(gun.OnFire(direction: dir))
+                }
+            }
         }
     }
     
