@@ -16,7 +16,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
     let fButton: SKSpriteNode
     let aBox: SKSpriteNode
     let gun: Gun
-    let enemy: Enemy
+    //let enemy: Enemy
     let rotationOffsetFactorForSpriteImage:CGFloat = -CGFloat.pi / 2
     //let rightJS:EEJoyStick
     let leftJS:EEJoyStick
@@ -61,7 +61,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         fButton = SKSpriteNode(imageNamed: "Fire_Button.png")
         aBox = SKSpriteNode(imageNamed: "Ammo_Box.png")
         gun = Gun()
-        enemy = Enemy()
+        //enemy = Enemy()
         
         //swap size before calling super
         let swapSize = CGSize(width: frameSize.height, height: frameSize.width)
@@ -249,7 +249,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         fButton = aDecoder.decodeObject(forKey: "fButton") as! SKSpriteNode
         aBox = aDecoder.decodeObject(forKey: "aBox") as! SKSpriteNode
         gun = aDecoder.decodeObject(forKey: "gun") as! Gun
-        enemy = aDecoder.decodeObject(forKey: "enemy") as! Enemy
+        //enemy = aDecoder.decodeObject(forKey: "enemy") as! Enemy
         super.init(coder: aDecoder)
     }
     
@@ -264,7 +264,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         aCoder.encode(fButton, forKey: "fButton")
         aCoder.encode(aBox, forKey: "aBox")
         aCoder.encode(gun, forKey: "gun")
-        aCoder.encode(gun, forKey: "enemy")
+        //aCoder.encode(gun, forKey: "enemy")
     }
     
     override func didMove(to view:SKView){
@@ -324,9 +324,9 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
     
     func randSpawn() {
         
-        //let enemy: Enemy
-        //enemy = Enemy()
-        
+        let enemy: Enemy
+        enemy = Enemy()
+       
         enemy.scale(to: CGSize(width: 55, height: 55))
         
         enemy.position = CGPoint(x: frame.size.width + enemy.size.width/2, y: frame.size.height * random(min: 0, max: 1))
@@ -334,7 +334,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         addChild(enemy)
         
         //enemy.run(SKAction.moveBy(x: -size.width - enemy.size.width, y: 0.0, duration: TimeInterval(random(min: 1, max: 2))))
-        
+        //enemy.run(SKAction.move(to: player.position, duration: 2.0))//
     }
     
     
@@ -367,7 +367,30 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         aBox.position = CGPoint(x: 500 ,y: 500)
         leftJS.position = CGPoint(x: player.position.x - offsetX ,y: player.position.y - offsetY)
         
-        enemy.run(SKAction.move(to: player.position, duration: 2.0))
+        var enemies: [SKNode] = children.filter { (node) -> Bool in
+            if let _ = node as? Enemy {
+                return true
+            }
+            return false
+        }
+        
+        enemies.forEach { (node) in
+            let enemy = node as! Enemy
+            
+            enemy.update(currentTime)
+            
+            if let _ = enemy.action(forKey: "Chase") {
+                return
+            }
+            
+            
+            
+           // player.position = CGPoint(x: player.position.x + cos(player.zRotation + 1.5708) * 40, y: player.position.y + sin(player.zRotation + 1.5708) * 40)
+            enemy.run(SKAction.move(to: player.position, duration: 2.5), withKey: "Chase")
+        }
+        
+        
+//        enemy.run(SKAction.move(to: player.position, duration: 2.0))
         
     }
     
