@@ -16,6 +16,7 @@ class LevelScene: SKScene {
     let dButton: SKSpriteNode
     let fButton: SKSpriteNode
     let rotationOffsetFactorForSpriteImage:CGFloat = -CGFloat.pi / 2
+    let rotationOffset = CGFloat(M_PI_2)
     //let rightJS:EEJoyStick
     let leftJS:EEJoyStick
     let scaledFrameSize: CGSize
@@ -99,10 +100,6 @@ class LevelScene: SKScene {
         gun.scale(to: CGSize(width: 20, height: 20))
         addChild(gun)
 
-        
-        
-        
-        
     }
     
     //MARK: touches
@@ -129,13 +126,41 @@ class LevelScene: SKScene {
             }
             else if touchLoc.x >= fButton.position.x - fBBox.width/2 && touchLoc.x <= fButton.position.x + fBBox.width/2 {
                 if touchLoc.y >= fButton.position.y - fBBox.height/2 && touchLoc.y <= fButton.position.y + fBBox.height/2{
-                    let dir = CGPoint(x: player.position.x + cos(player.zRotation + 1.5708), y: player.position.y + sin(player.zRotation + 1.5708))
-                    player.run(gun.OnFire(direction: dir))
+                   
+                    Shoot()
                 }
             }
         }
     }
     
+    func Shoot()->Void {
+        //let position = player.convert(player.WeaponAttachPoint(), to: self)
+        let position = gun.position
+            
+        let direction = Rotate(vector:CGVector(dx: 10, dy: 0), angle:player.zRotation + rotationOffset)
+        
+        let bullet = SKSpriteNode(imageNamed: "Bullet")
+        bullet.name = "bulletNode"
+        bullet.physicsBody = SKPhysicsBody(rectangleOf: bullet.frame.size)
+        bullet.physicsBody?.usesPreciseCollisionDetection = true
+        bullet.physicsBody?.affectedByGravity = false
+        bullet.position = CGPoint(x: position.x, y: position.y)
+        bullet.scale(to: CGSize(width: 10, height: 10))
+        self.addChild(bullet)
+        bullet.physicsBody?.applyImpulse(direction)
+        let destroy = SKAction.run({
+            bullet.removeFromParent()
+        })
+        let wait = SKAction.wait(forDuration: 2)
+        self.run(SKAction.sequence([wait, destroy]))
+    }
+        
+    func Rotate(vector:CGVector, angle:CGFloat) -> CGVector {
+        let rotX = vector.dx * cos(angle) - vector.dy * sin(angle)
+        let rotY = vector.dx * sin(angle) + vector.dy * cos(angle)
+        
+        return CGVector(dx: rotX, dy: rotY)
+    }
 
     //this does not save a refernce to the touch (though one could) because I envisioned the user
     //tapping the joy stick (which I belive would invalid any reference to a touch) in order to do an

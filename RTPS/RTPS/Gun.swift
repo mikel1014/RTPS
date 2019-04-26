@@ -28,11 +28,7 @@ class Gun: SKSpriteNode {
     
     func OnFire(direction:CGPoint)->SKAction {
         let shootBullet = SKAction.run {
-            let offset = sqrtf(Float(direction.x * direction.x + direction.y + direction.y))
-            let adjustedDir = CGPoint(x: direction.x / CGFloat(offset), y: direction.y / CGFloat(offset))
-            let bulletNode = self.CreateBulletNode(pos:adjustedDir)
-            self.addChild(bulletNode)
-            bulletNode.physicsBody?.applyImpulse(CGVector(dx: adjustedDir.x * 2, dy: adjustedDir.y * 2))
+            
         }
         
         return shootBullet
@@ -42,11 +38,11 @@ class Gun: SKSpriteNode {
         
         let bullet = SKSpriteNode(imageNamed: "Bullet")
         bullet.position = pos
-        bullet.zRotation += 1.5708
         bullet.name = "bulletNode"
         bullet.physicsBody = SKPhysicsBody(rectangleOf: bullet.frame.size)
         bullet.physicsBody?.usesPreciseCollisionDetection = true
         bullet.physicsBody?.affectedByGravity = false
+        self.addChild(bullet)
         
         return bullet
     }
