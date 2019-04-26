@@ -18,7 +18,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
     let gun: Gun
     //let enemy: Enemy
     let rotationOffsetFactorForSpriteImage:CGFloat = -CGFloat.pi / 2
-    let rotationOffset = CGFloat(M_PI_2)
+    let rotationOffset = CGFloat(Float.pi/2)
     //let rightJS:EEJoyStick
     let leftJS:EEJoyStick
     let scaledFrameSize: CGSize
