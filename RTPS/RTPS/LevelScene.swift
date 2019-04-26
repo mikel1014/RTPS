@@ -11,7 +11,7 @@ import GameplayKit
 class LevelScene: SKScene, SKPhysicsContactDelegate {
     
     let cameraNode:SKCameraNode
-    let player: SKSpriteNode
+    let player: Player
     let dButton: SKSpriteNode
     let fButton: SKSpriteNode
     let aBox: SKSpriteNode
@@ -56,11 +56,12 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         background = SKSpriteNode(imageNamed: "RTPS_Map_Background.png")
         //rightJS = EEJoyStick()
         leftJS = EEJoyStick()
-        player = SKSpriteNode(imageNamed: "Main_Character.png")
+        //player = SKSpriteNode(imageNamed: "Main_Character.png")
         dButton = SKSpriteNode(imageNamed: "Dodge_Button.png")
         fButton = SKSpriteNode(imageNamed: "Fire_Button.png")
         aBox = SKSpriteNode(imageNamed: "Ammo_Box.png")
         gun = Gun()
+        player = Player()
         //enemy = Enemy()
         
         //swap size before calling super
@@ -94,6 +95,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         aBox.position = CGPoint(x: 500, y: 500)
         aBox.scale(to: CGSize(width: 25, height: 25))
         aBox.physicsBody = SKPhysicsBody(rectangleOf: aBox.size)
+        aBox.physicsBody!.affectedByGravity = false
         aBox.physicsBody!.isDynamic = false
         aBox.name = "AmmoBox"
         
@@ -116,12 +118,6 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         player.physicsBody!.contactTestBitMask = aBox.physicsBody!.collisionBitMask
         
         
-        
-    }
-    
-    enum ColliderType: UInt32 {
-        case Player = 1
-        case AmmoBox = 2
     }
     
     //MARK: touches
@@ -248,7 +244,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         //rightJS = aDecoder.decodeObject(forKey: "rightJS") as! EEJoyStick
         leftJS = aDecoder.decodeObject(forKey: "leftJS") as! EEJoyStick
         background = aDecoder.decodeObject(forKey: "background") as! SKSpriteNode
-        player = aDecoder.decodeObject(forKey: "player") as! SKSpriteNode
+        player = aDecoder.decodeObject(forKey: "player") as! Player
         dButton = aDecoder.decodeObject(forKey: "dButton") as! SKSpriteNode
         fButton = aDecoder.decodeObject(forKey: "fButton") as! SKSpriteNode
         aBox = aDecoder.decodeObject(forKey: "aBox") as! SKSpriteNode
@@ -289,6 +285,12 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         switch name {
         case "Enemy":
             print("hit")
+            player.takeDamage(health_: 1)
+            print("\(player.health)")
+        case "Player":
+            print ("Ammo Collected")
+            aBox.removeFromParent()
+            gun.ammo += 5
         default:
             print("no hit")
         }
@@ -347,6 +349,9 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         enemy.scale(to: CGSize(width: 55, height: 55))
         
         enemy.position = CGPoint(x: frame.size.width + enemy.size.width/2, y: frame.size.height * random(min: 0, max: 1))
+        
+        
+
         
         enemy.physicsBody = SKPhysicsBody(rectangleOf: enemy.size)
         enemy.physicsBody!.affectedByGravity = false
@@ -410,7 +415,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
             
             enemy.zRotation = angle - 1.5708
             
-            
+            player.physicsBody!.contactTestBitMask = enemy.physicsBody!.collisionBitMask
            // player.position = CGPoint(x: player.position.x + cos(player.zRotation + 1.5708) * 40, y: player.position.y + sin(player.zRotation + 1.5708) * 40)
             enemy.run(SKAction.move(to: player.position, duration: 2.2), withKey: "Chase")
             

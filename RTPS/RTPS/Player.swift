@@ -15,10 +15,10 @@ class Player : SKSpriteNode {
     var health:Int
     var money:Int
     var moveSpd:CGFloat
-    let tex: SKTexture = SKTexture.init(imageNamed: "Main_Character")
+    let tex: SKTexture = SKTexture.init(imageNamed: "Main_Character.png")
     
     init() {
-        health = 10
+        health = 1000
         money = 0
         moveSpd = 10.0
         super.init(texture: tex, color: UIColor.clear, size: tex.size())
@@ -26,5 +26,13 @@ class Player : SKSpriteNode {
     
     required init?(coder aDecoder: NSCoder){
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func GetHealth() -> Int {
+        return health
+    }
+    
+    func takeDamage(health_: Int){
+        health -= health_
     }
 }
