@@ -12,12 +12,14 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
     
     let cameraNode:SKCameraNode
     let player: Player
+    let gun: Gun
     let dButton: SKSpriteNode
     let fButton: SKSpriteNode
     let aBox: SKSpriteNode
     let gun: Gun
     //let enemy: Enemy
     let rotationOffsetFactorForSpriteImage:CGFloat = -CGFloat.pi / 2
+    let rotationOffset = CGFloat(M_PI_2)
     //let rightJS:EEJoyStick
     let leftJS:EEJoyStick
     let scaledFrameSize: CGSize
@@ -55,6 +57,8 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         cameraNode = SKCameraNode()
         background = SKSpriteNode(imageNamed: "RTPS_Map_Background.png")
         //rightJS = EEJoyStick()
+        player = Player()
+        gun = Gun()
         leftJS = EEJoyStick()
         //player = SKSpriteNode(imageNamed: "Main_Character.png")
         dButton = SKSpriteNode(imageNamed: "Dodge_Button.png")
@@ -114,10 +118,10 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         player.name = "Player"
         addChild(player)
         
-
+        gun.position = player.WeaponAttachPoint()
+        gun.scale(to: CGSize(width: 20, height: 20))
+        addChild(gun)
         player.physicsBody!.contactTestBitMask = aBox.physicsBody!.collisionBitMask
-        
-        
     }
     
     //MARK: touches
@@ -142,9 +146,43 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
                     player.position = CGPoint(x: player.position.x + cos(player.zRotation + 1.5708) * 40, y: player.position.y + sin(player.zRotation + 1.5708) * 40) // Dashes along the players forward vector
                 }
             }
+            else if touchLoc.x >= fButton.position.x - fBBox.width/2 && touchLoc.x <= fButton.position.x + fBBox.width/2 {
+                if touchLoc.y >= fButton.position.y - fBBox.height/2 && touchLoc.y <= fButton.position.y + fBBox.height/2{
+                   
+                    Shoot()
+                }
+            }
         }
     }
     
+    func Shoot()->Void {
+        //let position = player.convert(player.WeaponAttachPoint(), to: self)
+        let position = gun.position
+            
+        let direction = Rotate(vector:CGVector(dx: 10, dy: 0), angle:player.zRotation + rotationOffset)
+        
+        let bullet = SKSpriteNode(imageNamed: "Bullet")
+        bullet.name = "bulletNode"
+        bullet.physicsBody = SKPhysicsBody(rectangleOf: bullet.frame.size)
+        bullet.physicsBody?.usesPreciseCollisionDetection = true
+        bullet.physicsBody?.affectedByGravity = false
+        bullet.position = CGPoint(x: position.x, y: position.y)
+        bullet.scale(to: CGSize(width: 10, height: 10))
+        self.addChild(bullet)
+        bullet.physicsBody?.applyImpulse(direction)
+        let destroy = SKAction.run({
+            bullet.removeFromParent()
+        })
+        let wait = SKAction.wait(forDuration: 2)
+        self.run(SKAction.sequence([wait, destroy]))
+    }
+        
+    func Rotate(vector:CGVector, angle:CGFloat) -> CGVector {
+        let rotX = vector.dx * cos(angle) - vector.dy * sin(angle)
+        let rotY = vector.dx * sin(angle) + vector.dy * cos(angle)
+        
+        return CGVector(dx: rotX, dy: rotY)
+    }
 
     //this does not save a refernce to the touch (though one could) because I envisioned the user
     //tapping the joy stick (which I belive would invalid any reference to a touch) in order to do an
@@ -245,6 +283,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         leftJS = aDecoder.decodeObject(forKey: "leftJS") as! EEJoyStick
         background = aDecoder.decodeObject(forKey: "background") as! SKSpriteNode
         player = aDecoder.decodeObject(forKey: "player") as! Player
+        gun = aDecoder.decodeObject(forKey: "gun") as! Gun
         dButton = aDecoder.decodeObject(forKey: "dButton") as! SKSpriteNode
         fButton = aDecoder.decodeObject(forKey: "fButton") as! SKSpriteNode
         aBox = aDecoder.decodeObject(forKey: "aBox") as! SKSpriteNode
@@ -260,6 +299,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         aCoder.encode(leftJS, forKey: "leftJS")
         aCoder.encode(background, forKey: "background")
         aCoder.encode(player, forKey: "player")
+        aCoder.encode(gun, forKey: "gun")
         aCoder.encode(dButton, forKey: "dButton")
         aCoder.encode(fButton, forKey: "fButton")
         aCoder.encode(aBox, forKey: "aBox")
@@ -393,6 +433,9 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         aBox.position = CGPoint(x: 500 ,y: 500)
         leftJS.position = CGPoint(x: player.position.x - offsetX ,y: player.position.y - offsetY)
         
+        gun.position = player.WeaponAttachPoint()
+        gun.zRotation = player.zRotation - 1.5708
+
         var enemies: [SKNode] = children.filter { (node) -> Bool in
             if let _ = node as? Enemy {
                 return true
