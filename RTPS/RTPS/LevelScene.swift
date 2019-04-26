@@ -12,7 +12,6 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
     
     let cameraNode:SKCameraNode
     let player: Player
-    let gun: Gun
     let dButton: SKSpriteNode
     let fButton: SKSpriteNode
     let aBox: SKSpriteNode
@@ -57,8 +56,6 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         cameraNode = SKCameraNode()
         background = SKSpriteNode(imageNamed: "RTPS_Map_Background.png")
         //rightJS = EEJoyStick()
-        player = Player()
-        gun = Gun()
         leftJS = EEJoyStick()
         //player = SKSpriteNode(imageNamed: "Main_Character.png")
         dButton = SKSpriteNode(imageNamed: "Dodge_Button.png")
@@ -287,7 +284,6 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         dButton = aDecoder.decodeObject(forKey: "dButton") as! SKSpriteNode
         fButton = aDecoder.decodeObject(forKey: "fButton") as! SKSpriteNode
         aBox = aDecoder.decodeObject(forKey: "aBox") as! SKSpriteNode
-        gun = aDecoder.decodeObject(forKey: "gun") as! Gun
         //enemy = aDecoder.decodeObject(forKey: "enemy") as! Enemy
         super.init(coder: aDecoder)
     }
@@ -303,7 +299,6 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         aCoder.encode(dButton, forKey: "dButton")
         aCoder.encode(fButton, forKey: "fButton")
         aCoder.encode(aBox, forKey: "aBox")
-        aCoder.encode(gun, forKey: "gun")
         //aCoder.encode(gun, forKey: "enemy")
     }
     

@@ -38,6 +38,8 @@ class Player : SKSpriteNode {
         let attachPoint = CGPoint(x: (position.x) + cos(zRotation + 1.5708) * 30, y: (position.y) + sin(zRotation + 1.5708) * 30)
         
         return attachPoint
+        
+    }
     func GetHealth() -> Int {
         return health
     }
