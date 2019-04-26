@@ -15,10 +15,12 @@ class Gun: SKSpriteNode {
     var tex:SKTexture = SKTexture.init(imageNamed: "Glock")
     var damage:Int
     var capacity:Int
+    var ammo: Int
     
     init(){
         damage = 0
         capacity = 0
+        ammo = 0
         super.init(texture : tex, color:UIColor.clear, size: tex.size())
     }
     
