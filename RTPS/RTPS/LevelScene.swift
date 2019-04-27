@@ -16,13 +16,12 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
     let fButton: SKSpriteNode
     let aBox: SKSpriteNode
     let gun: Gun
-    //let enemy: Enemy
     let rotationOffsetFactorForSpriteImage:CGFloat = -CGFloat.pi / 2
     let rotationOffset = CGFloat(Float.pi/2)
-    //let rightJS:EEJoyStick
     let leftJS:EEJoyStick
     let scaledFrameSize: CGSize
     let background:SKSpriteNode
+    var bullets = [SKSpriteNode]()
     
     var dBBox: CGSize!
     var fBBox: CGSize!
@@ -55,15 +54,12 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         //Declaration matters - at least when using classes that contain multiple nodess
         cameraNode = SKCameraNode()
         background = SKSpriteNode(imageNamed: "RTPS_Map_Background.png")
-        //rightJS = EEJoyStick()
         leftJS = EEJoyStick()
-        //player = SKSpriteNode(imageNamed: "Main_Character.png")
         dButton = SKSpriteNode(imageNamed: "Dodge_Button.png")
         fButton = SKSpriteNode(imageNamed: "Fire_Button.png")
         aBox = SKSpriteNode(imageNamed: "Ammo_Box.png")
         gun = Gun()
         player = Player()
-        //enemy = Enemy()
         
         //swap size before calling super
         let swapSize = CGSize(width: frameSize.height, height: frameSize.width)
@@ -80,9 +76,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         cameraNode.position = CGPoint(x: baseX/2, y: baseY/2)
         addChild(cameraNode)
         
-        //Joy Sticks (note joystick positions are changed in update method)
-        //rightJS.position = CGPoint(x: frame.size.width * 0.75 + baseX, y: frame.size.height * 0.1 + baseY)
-        //addChild(rightJS)
+        //Joy Stick (note joystick positions are changed in update method)
         
         dBBox = dButton.size
         dButton.position = CGPoint(x: player.position.x + dOffsetX ,y: player.position.y - dOffsetY)
@@ -153,7 +147,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func Shoot()->Void {
-        //let position = player.convert(player.WeaponAttachPoint(), to: self)
+        
         let position = gun.position
             
         let direction = Rotate(vector:CGVector(dx: 10, dy: 0), angle:player.zRotation + rotationOffset)
@@ -163,9 +157,10 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         bullet.physicsBody = SKPhysicsBody(rectangleOf: bullet.frame.size)
         bullet.physicsBody?.usesPreciseCollisionDetection = true
         bullet.physicsBody?.affectedByGravity = false
-        bullet.position = CGPoint(x: position.x, y: position.y)
+        bullet.position = CGPoint(x: position.x + direction.dx, y: position.y + direction.dy)
         bullet.scale(to: CGSize(width: 10, height: 10))
         self.addChild(bullet)
+        bullets.append(bullet)
         bullet.physicsBody?.applyImpulse(direction)
         let destroy = SKAction.run({
             bullet.removeFromParent()
@@ -313,10 +308,26 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
     
     
     func didBegin(_ contact: SKPhysicsContact) {
-       //guard let nodeA = contact.bodyA.node else {return}
-       //guard let nodeB = contact.bodyB.node else {return}
+        
+        if contact.bodyA.node?.name == "bulletNode" || contact.bodyB.node?.name == "bulletNode" {
+            print("Shot Hit")
+            if contact.bodyA.node?.name == "bulletNode" {
+                if contact.bodyB.node?.name == "Enemy" {
+                    contact.bodyA.node?.removeFromParent()
+                    contact.bodyB.node?.removeFromParent()
+                }
+            }
+            else{
+                if contact.bodyA.node?.name == "Enemy" {
+                    contact.bodyA.node?.removeFromParent()
+                    contact.bodyB.node?.removeFromParent()
+                }
+            }
+        }
+        
         guard let name = contact.bodyB.node?.name else { return }
         print(name)
+        print("\(String(describing: contact.bodyA.node?.name))")
         switch name {
         case "Enemy":
             print("hit")
@@ -329,16 +340,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         default:
             print("no hit")
         }
-//        if contact.bodyA.node?.name == "Player" {
-//
-//        }else if contact.bodyB.node?.name == "AmmoBox"{
-//
-//        }
-//        else if let name = contact.bodyB.node?.name, name == "Enemy" {
-//
-//        }
-//        print("\(contact.bodyA.node!.name) \(contact.bodyB.node!.name)")
-        
+
     }
     
     //returns the size, multiplied by a factor.
@@ -357,9 +359,6 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func clearJoyStickData(){
-        //if !rightJS.joyStickActive(){
-            //rightMovementData = nil
-        //}
         if !leftJS.joyStickActive(){
             leftMovementData = nil
         }
@@ -391,7 +390,6 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         enemy.physicsBody = SKPhysicsBody(rectangleOf: enemy.size)
         enemy.physicsBody!.affectedByGravity = false
         enemy.physicsBody!.isDynamic = true
-        
         addChild(enemy)
         
         //enemy.run(SKAction.moveBy(x: -size.width - enemy.size.width, y: 0.0, duration: TimeInterval(random(min: 1, max: 2))))
@@ -402,9 +400,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         //Handle Player Updating Based On Joystick Data
-        //if rightMovementData != nil && rightJS.joyStickActive(){
-            //updatePlayerRotation(JoystickData: rightMovementData!)
-        //}
+        
         
         self.physicsWorld.contactDelegate = self
         
@@ -412,7 +408,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
             updatePlayerPosition(JoystickData: leftMovementData!)
             updatePlayerRotation(JoystickData: leftMovementData!)
         }
-        //rightJS.joystickUpdateMethod()
+        
         leftJS.joystickUpdateMethod()
         clearJoyStickData()
         
@@ -422,7 +418,6 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         let offsetX = frame.size.width * 0.35
         let offsetY = frame.size.height * 0.30
         
-        //rightJS.position = CGPoint(x: player.position.x + offsetX ,y: player.position.y - offsetY)
         dButton.position = CGPoint(x: player.position.x + dOffsetX ,y: player.position.y - dOffsetY)
         fButton.position = CGPoint(x: player.position.x + fOffsetX ,y: player.position.y - fOffsetY)
         aBox.position = CGPoint(x: 500 ,y: 500)
@@ -431,7 +426,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         gun.position = player.WeaponAttachPoint()
         gun.zRotation = player.zRotation - 1.5708
 
-        var enemies: [SKNode] = children.filter { (node) -> Bool in
+        let enemies: [SKNode] = children.filter { (node) -> Bool in
             if let _ = node as? Enemy {
                 return true
             }
@@ -454,14 +449,13 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
             enemy.zRotation = angle - 1.5708
             
             player.physicsBody!.contactTestBitMask = enemy.physicsBody!.collisionBitMask
-           // player.position = CGPoint(x: player.position.x + cos(player.zRotation + 1.5708) * 40, y: player.position.y + sin(player.zRotation + 1.5708) * 40)
-            enemy.run(SKAction.move(to: player.position, duration: 2.2), withKey: "Chase")
+            if self.bullets.count > 0 {
+                enemy.physicsBody!.contactTestBitMask = bullets[0].physicsBody!.collisionBitMask
+            }
+           
+            enemy.run(SKAction.move(to: player.position, duration: 6), withKey: "Chase")
             
         }
-        
-            //collisionBetween(player: player, object: aBox)
-        
-//        enemy.run(SKAction.move(to: player.position, duration: 2.0))
         
     }
     
