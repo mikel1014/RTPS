@@ -293,36 +293,34 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
     
     
     func didBegin(_ contact: SKPhysicsContact) {
-
-        print(name)     
+    
+        guard let name = contact.bodyB.node?.name else {return}
+        
         if contact.bodyA.node?.name == "bulletNode" || contact.bodyB.node?.name == "bulletNode"{
             if contact.bodyA.node?.name == "bulletNode"{
                 if contact.bodyB.node?.name == "Enemy"{
                     contact.bodyA.node?.removeFromParent()
                     contact.bodyB.node?.removeFromParent()
-                    score += 100
+                    score += 146
                 }
             }
             else {
                 if contact.bodyA.node?.name == "Enemy"{
                     contact.bodyA.node?.removeFromParent()
                     contact.bodyB.node?.removeFromParent()
-                    score += 100
+                    score += 146
                 }
             }
         }
       
         switch name {
         case "Enemy":
-            print("hit")
             player.takeDamage(health_: 1)
             if player.health <= 0{
                 player.removeFromParent()
                 gun.removeFromParent()
             }
-            print("\(player.health)")
         case "Player":
-            print ("Ammo Collected")
             aBox.removeFromParent()
             gun.ammo += 5
         default:
@@ -441,9 +439,12 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         }
       
         scoreLabel.text = "Score: \(score)"
+        if player.health <= 0 {
+            player.health = 0
+        }
         hpLabel.text = "Health: \(player.health)"
       
         }
 
     }
-}
+
