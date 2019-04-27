@@ -21,6 +21,10 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
     let leftJS:EEJoyStick
     let scaledFrameSize: CGSize
     let background:SKSpriteNode
+    var scoreLabel: SKLabelNode!
+    var hpLabel: SKLabelNode!
+    var score: Int
+
     var bullets = [SKSpriteNode]()
     
     var dBBox: CGSize!
@@ -60,6 +64,9 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         aBox = SKSpriteNode(imageNamed: "Ammo_Box.png")
         gun = Gun()
         player = Player()
+        //enemy = Enemy()
+        score = 0
+
         
         //swap size before calling super
         let swapSize = CGSize(width: frameSize.height, height: frameSize.width)
@@ -113,6 +120,20 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         gun.scale(to: CGSize(width: 20, height: 20))
         addChild(gun)
         player.physicsBody!.contactTestBitMask = aBox.physicsBody!.collisionBitMask
+        
+        //Creates a score label
+        scoreLabel = SKLabelNode(fontNamed: "Chalkduster")
+        scoreLabel.text = "Score: \(score)"
+        scoreLabel.horizontalAlignmentMode = .left
+        scoreLabel.position = CGPoint(x: 75 , y: 40)
+        addChild(scoreLabel)
+        
+        //Creates a health label
+        hpLabel = SKLabelNode(fontNamed: "Chalkduster")
+        hpLabel.text = "Health: \(player.health)"
+        hpLabel.horizontalAlignmentMode = .right
+        hpLabel.position = CGPoint(x: 200 , y: 40)
+        addChild(hpLabel)
     }
     
     //MARK: touches
@@ -279,6 +300,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         dButton = aDecoder.decodeObject(forKey: "dButton") as! SKSpriteNode
         fButton = aDecoder.decodeObject(forKey: "fButton") as! SKSpriteNode
         aBox = aDecoder.decodeObject(forKey: "aBox") as! SKSpriteNode
+        score = aDecoder.decodeObject(forKey: "score") as! Int
         //enemy = aDecoder.decodeObject(forKey: "enemy") as! Enemy
         super.init(coder: aDecoder)
     }
@@ -294,13 +316,12 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         aCoder.encode(dButton, forKey: "dButton")
         aCoder.encode(fButton, forKey: "fButton")
         aCoder.encode(aBox, forKey: "aBox")
+        aCoder.encode(score, forKey: "score")
         //aCoder.encode(gun, forKey: "enemy")
     }
     
     override func didMove(to view:SKView){
         self.camera = cameraNode
-        
-        //Collision checking
         
 
         run(SKAction.repeatForever(SKAction.sequence([SKAction.run(randSpawn), SKAction.wait(forDuration: 1.0)])))
@@ -326,12 +347,32 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         }
         
         guard let name = contact.bodyB.node?.name else { return }
-        print(name)
-        print("\(String(describing: contact.bodyA.node?.name))")
+        print(name)     
+        if contact.bodyA.node?.name == "bulletNode" || contact.bodyB.node?.name == "bulletNode"{
+            if contact.bodyA.node?.name == "bulletNode"{
+                if contact.bodyB.node?.name == "Enemy"{
+                    contact.bodyA.node?.removeFromParent()
+                    contact.bodyB.node?.removeFromParent()
+                    score += 100
+                }
+            }
+            else {
+                if contact.bodyA.node?.name == "Enemy"{
+                    contact.bodyA.node?.removeFromParent()
+                    contact.bodyB.node?.removeFromParent()
+                    score += 100
+                }
+            }
+        }
+
         switch name {
         case "Enemy":
             print("hit")
             player.takeDamage(health_: 1)
+            if player.health <= 0{
+                player.removeFromParent()
+                gun.removeFromParent()
+            }
             print("\(player.health)")
         case "Player":
             print ("Ammo Collected")
@@ -422,6 +463,9 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         fButton.position = CGPoint(x: player.position.x + fOffsetX ,y: player.position.y - fOffsetY)
         aBox.position = CGPoint(x: 500 ,y: 500)
         leftJS.position = CGPoint(x: player.position.x - offsetX ,y: player.position.y - offsetY)
+        scoreLabel.position = CGPoint(x: player.position.x - offsetX - 75, y: player.position.y + offsetY + 10)
+        hpLabel.position = CGPoint(x: player.position.x - offsetX + 625, y: player.position.y + offsetY + 10)
+
         
         gun.position = player.WeaponAttachPoint()
         gun.zRotation = player.zRotation - 1.5708
@@ -432,7 +476,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
             }
             return false
         }
-        
+       
         enemies.forEach { (node) in
             let enemy = node as! Enemy
             
@@ -449,7 +493,8 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
             enemy.zRotation = angle - 1.5708
             
             player.physicsBody!.contactTestBitMask = enemy.physicsBody!.collisionBitMask
-            if self.bullets.count > 0 {
+            
+             if self.bullets.count > 0 {
                 enemy.physicsBody!.contactTestBitMask = bullets[0].physicsBody!.collisionBitMask
             }
            
@@ -457,6 +502,14 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
+        scoreLabel.text = "Score: \(score)"
+        hpLabel.text = "Health: \(player.health)"
+        
+
+           
+            
+        }
+
     }
     
 }
