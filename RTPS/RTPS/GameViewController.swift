@@ -11,7 +11,7 @@ import SpriteKit
 import GameplayKit
 
 class GameViewController: UIViewController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -23,6 +23,14 @@ class GameViewController: UIViewController {
             
                 // Present the scene
                 view.presentScene(scene)
+            
+            //Creates score label
+            //let label = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 21))
+            //label.center = CGPoint(x: 75, y: 40)
+            //label.textAlignment = .center
+            //label.text = "Score: "
+            //label.textColor = UIColor.white
+            //self.view.addSubview(label)
             
             
             view.ignoresSiblingOrder = true
