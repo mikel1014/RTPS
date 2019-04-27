@@ -24,7 +24,9 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
     let scaledFrameSize: CGSize
     let background:SKSpriteNode
     var scoreLabel: SKLabelNode!
+    var hpLabel: SKLabelNode!
     var score: Int
+    var bullets = [SKSpriteNode]()
     
     var dBBox: CGSize!
     var fBBox: CGSize!
@@ -129,6 +131,13 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         scoreLabel.horizontalAlignmentMode = .left
         scoreLabel.position = CGPoint(x: 75 , y: 40)
         addChild(scoreLabel)
+        
+        //Creates a health label
+        hpLabel = SKLabelNode(fontNamed: "Chalkduster")
+        hpLabel.text = "Health: \(player.health)"
+        hpLabel.horizontalAlignmentMode = .right
+        hpLabel.position = CGPoint(x: 200 , y: 40)
+        addChild(hpLabel)
     }
     
     //MARK: touches
@@ -176,6 +185,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         bullet.position = CGPoint(x: position.x, y: position.y)
         bullet.scale(to: CGSize(width: 10, height: 10))
         self.addChild(bullet)
+        bullets.append(bullet)
         bullet.physicsBody?.applyImpulse(direction)
         let destroy = SKAction.run({
             bullet.removeFromParent()
@@ -327,10 +337,32 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
        //guard let nodeB = contact.bodyB.node else {return}
         guard let name = contact.bodyB.node?.name else { return }
         print(name)
+        
+        if contact.bodyA.node?.name == "bulletNode" || contact.bodyB.node?.name == "bulletNode"{
+            if contact.bodyA.node?.name == "bulletNode"{
+                if contact.bodyB.node?.name == "Enemy"{
+                    contact.bodyA.node?.removeFromParent()
+                    contact.bodyB.node?.removeFromParent()
+                    score += 100
+                }
+            }
+            else {
+                if contact.bodyA.node?.name == "Enemy"{
+                    contact.bodyA.node?.removeFromParent()
+                    contact.bodyB.node?.removeFromParent()
+                    score += 100
+                }
+            }
+        }
+        
         switch name {
         case "Enemy":
             print("hit")
             player.takeDamage(health_: 1)
+            if player.health <= 0{
+                player.removeFromParent()
+                gun.removeFromParent()
+            }
             print("\(player.health)")
         case "Player":
             print ("Ammo Collected")
@@ -438,6 +470,8 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         aBox.position = CGPoint(x: 500 ,y: 500)
         leftJS.position = CGPoint(x: player.position.x - offsetX ,y: player.position.y - offsetY)
         scoreLabel.position = CGPoint(x: player.position.x - offsetX - 75, y: player.position.y + offsetY + 10)
+        hpLabel.position = CGPoint(x: player.position.x - offsetX + 625, y: player.position.y + offsetY + 10)
+
         
         gun.position = player.WeaponAttachPoint()
         gun.zRotation = player.zRotation - 1.5708
@@ -465,14 +499,17 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
             enemy.zRotation = angle - 1.5708
             
             player.physicsBody!.contactTestBitMask = enemy.physicsBody!.collisionBitMask
-           // player.position = CGPoint(x: player.position.x + cos(player.zRotation + 1.5708) * 40, y: player.position.y + sin(player.zRotation + 1.5708) * 40)
+            
+            if self.bullets.count > 0{
+                enemy.physicsBody!.contactTestBitMask = bullets[0].physicsBody!.collisionBitMask
+            }
+            
             enemy.run(SKAction.move(to: player.position, duration: 2.2), withKey: "Chase")
             
         }
         
-            //collisionBetween(player: player, object: aBox)
-        
-//        enemy.run(SKAction.move(to: player.position, duration: 2.0))
+        scoreLabel.text = "Score: \(score)"
+        hpLabel.text = "Health: \(player.health)"
         
     }
     

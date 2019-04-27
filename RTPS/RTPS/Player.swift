@@ -19,7 +19,7 @@ class Player : SKSpriteNode {
     let tex: SKTexture = SKTexture.init(imageNamed: "Main_Character.png")
     
     init() {
-        health = 1000
+        health = 100
         money = 0
         moveSpd = 10.0
         weaponAttachOffset = CGPoint(x: 25, y: 25)
