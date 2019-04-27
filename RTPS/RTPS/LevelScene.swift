@@ -117,16 +117,6 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
     
     //MARK: touches
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //test by moving player to click, which should move camera
-        //let ftouch = touches.first!
-        //let ftloc = ftouch.location(in: self)
-        
-        //convert view coordinates to scene coordinates
-        // ???
-        
-        //use converted points
-        //let touchPt:CGPoint = CGPoint(x: ftloc.x, y: ftloc.y)
-        //player.run(SKAction.move(to: touchPt, duration: 2), withKey: "moving player")
         
         for touch in touches{
             let touchLoc = touch.location(in: self)
@@ -176,11 +166,6 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         return CGVector(dx: rotX, dy: rotY)
     }
 
-    //this does not save a refernce to the touch (though one could) because I envisioned the user
-    //tapping the joy stick (which I belive would invalid any reference to a touch) in order to do an
-    //action (such as shoot). So, instead touches are evaluated in terms of proximity to a given joy stick,
-    //this way the user could tap the joy stick to do an action (such as shoot, crouch, etc.). There could be a delay
-    //instated before a joy stick is reset
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches{
             let touchLoc = touch.location(in: self)
@@ -215,11 +200,6 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    /*
-     movement data should be a [CGFloat] of size 2.
-     @param movData.0 = the angle of movement (obtained from arc tan - which means certain caveats)
-     @param movData.1 = the strength of the movement.
-    */
     func updatePlayerPosition(JoystickData movData: [CGFloat]){
         //shadow param movData with local var so that it can be mutated
         var movData = movData
@@ -241,12 +221,6 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         xChange *= movData[1]
         yChange *= movData[1]
         
-
-        //debug trance
-        //print("x: \(xChange) y: \(yChange)")
-        //print("updatePlayerPosition reporting angle \(movData[0])")
-
-        
         //correct for quadrants where x < 0
         if movData[0] > (CGFloat.pi / 2) || movData[0] < -(CGFloat.pi / 2) {
            // yChange *= -1
@@ -256,11 +230,6 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         player.position = CGPoint(x: playerCurrentPosition.x + xChange, y: playerCurrentPosition.y + yChange)
     }
     
-    /*
-     joystick data should be a [CGFloat] of size 2.
-     @param movData.0 = the angle of movement (obtained from arc tan - which means certain caveats)
-     @param movData.1 = the strength of the movement.
-     */
     func updatePlayerRotation(JoystickData joyData: [CGFloat]){
         player.zRotation = joyData[0] + rotationOffsetFactorForSpriteImage
     }
@@ -271,7 +240,6 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
     required init?(coder aDecoder: NSCoder) {
         cameraNode = aDecoder.decodeObject(forKey: "cameraNode") as! SKCameraNode
         scaledFrameSize = aDecoder.decodeObject(forKey: "scaledFrameSize") as! CGSize
-        //rightJS = aDecoder.decodeObject(forKey: "rightJS") as! EEJoyStick
         leftJS = aDecoder.decodeObject(forKey: "leftJS") as! EEJoyStick
         background = aDecoder.decodeObject(forKey: "background") as! SKSpriteNode
         player = aDecoder.decodeObject(forKey: "player") as! Player
@@ -279,14 +247,12 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         dButton = aDecoder.decodeObject(forKey: "dButton") as! SKSpriteNode
         fButton = aDecoder.decodeObject(forKey: "fButton") as! SKSpriteNode
         aBox = aDecoder.decodeObject(forKey: "aBox") as! SKSpriteNode
-        //enemy = aDecoder.decodeObject(forKey: "enemy") as! Enemy
         super.init(coder: aDecoder)
     }
     
     override func encode(with aCoder: NSCoder) {
         aCoder.encode(cameraNode, forKey: "cameraNode")
         aCoder.encode(scaledFrameSize, forKey: "scaledFrameSize")
-        //aCoder.encode(rightJS, forKey: "rightJS")
         aCoder.encode(leftJS, forKey: "leftJS")
         aCoder.encode(background, forKey: "background")
         aCoder.encode(player, forKey: "player")
@@ -294,15 +260,11 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         aCoder.encode(dButton, forKey: "dButton")
         aCoder.encode(fButton, forKey: "fButton")
         aCoder.encode(aBox, forKey: "aBox")
-        //aCoder.encode(gun, forKey: "enemy")
     }
     
     override func didMove(to view:SKView){
         self.camera = cameraNode
         
-        //Collision checking
-        
-
         run(SKAction.repeatForever(SKAction.sequence([SKAction.run(randSpawn), SKAction.wait(forDuration: 1.0)])))
     }
     
@@ -327,6 +289,7 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         
         guard let name = contact.bodyB.node?.name else { return }
         print(name)
+        
         print("\(String(describing: contact.bodyA.node?.name))")
         switch name {
         case "Enemy":
@@ -340,7 +303,6 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         default:
             print("no hit")
         }
-
     }
     
     //returns the size, multiplied by a factor.
@@ -362,7 +324,6 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         if !leftJS.joyStickActive(){
             leftMovementData = nil
         }
-        
     }
     
     //Helps with random enemy spawning
@@ -391,16 +352,10 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
         enemy.physicsBody!.affectedByGravity = false
         enemy.physicsBody!.isDynamic = true
         addChild(enemy)
-        
-        //enemy.run(SKAction.moveBy(x: -size.width - enemy.size.width, y: 0.0, duration: TimeInterval(random(min: 1, max: 2))))
-        //enemy.run(SKAction.move(to: player.position, duration: 2.0))//
     }
-    
-    
     
     override func update(_ currentTime: TimeInterval) {
         //Handle Player Updating Based On Joystick Data
-        
         
         self.physicsWorld.contactDelegate = self
         
@@ -454,9 +409,6 @@ class LevelScene: SKScene, SKPhysicsContactDelegate {
             }
            
             enemy.run(SKAction.move(to: player.position, duration: 6), withKey: "Chase")
-            
         }
-        
     }
-    
 }
